@@ -4,7 +4,8 @@
   "description": "This bot is a virtual mailbox that collects messages through it's dm's that can be viewed by users.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/index.js"
   },
   "repository": {
     "type": "git",
