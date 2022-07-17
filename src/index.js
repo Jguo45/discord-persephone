@@ -1,122 +1,101 @@
-const Discord = require("discord.js");
-const client = new Discord.Client();
-const Database = require("better-sqlite3");
-const path = require("path");
-const https = require('https');
-const fs = require("fs");
-require("dotenv").config();
+require('dotenv').config()
+const fs = require('node:fs')
+const path = require('node:path')
 
-const queries = require("../src/db-queries");
-const db = new Database(path.resolve("data/mailbox.db"));
-const mailboxDir = "./data/mailbox.txt";
+const { Client, Collection, Intents } = require('discord.js')
+const moment = require('moment')
+const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
 
-const PREFIX = "!";
-const adminID = process.env.ADMINID.split(" ");
-const cooldowns = new Discord.Collection();
+client.commands = new Collection()
+const commandsPath = path.join(__dirname, '../commands')
+const commandFiles = fs
+  .readdirSync(commandsPath)
+  .filter((file) => file.endsWith('.js'))
 
-// Login
-client.once("ready", () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-  client.user.setActivity("for messages! | !help", { type: "WATCHING" });
-  queries.createTable(db);
-});
+for (const file of commandFiles) {
+  const filePath = path.join(commandsPath, file)
+  const command = require(filePath)
 
-client.once("reconnecting", () => {
-  console.log("Reconnecting!");
-});
+  client.commands.set(command.data.name, command)
+}
 
-client.once("disconnect", () => {
-  console.log("Disconnected!");
-});
-
-// restricted bot commands
-client.on("message", (msg) => {
-  if (
-    !msg.content.startsWith(PREFIX) ||
-    !(msg.channel instanceof Discord.DMChannel) ||
-    !adminID.includes(msg.author.id) ||
-    msg.author.bot
-  )
-    return;
-
-  const args = msg.content.slice(PREFIX.length).trim().split(/ +/);
-  const commandName = args.shift().toLowerCase();
-
-  // opens the mailbox to see messages
-  if (commandName === "open") {
-    msg.channel.send({ files: [mailboxDir] });
-  }
-
-  // clears the mailbox
-  else if (commandName === "clear") {
-    fs.writeFileSync(mailboxDir, "");
-
-    console.log("Cleared Table");
-    msg.channel.send("Cleared Table");
-  }
-
-  // sets the mailbox to txt file sent to bot
-  else if (commandName === 'set') {
-    let filter = (m) => m.author.id === msg.author.id && m.channel instanceof Discord.DMChannel;
-    const collector = msg.channel.createMessageCollector(filter, {
-      max: 1,
-    });
-
-    msg.channel.send('Send file:');
-    collector.on('collect', (m) => {
-      let url = m.attachments.first().url;
-      const file = fs.createWriteStream(mailboxDir);
-      const request = https.get(url, (response) => {
-        response.pipe(file);
-        msg.channel.send('File recieved successfully');
-        console.log('Mailbox set');
-      });
-    });
-
-  } 
-});
-
-// unrestricted bot commands
-client.on('message', (msg) => {
-  if (!msg.content.startsWith(PREFIX) || msg.author.bot) return;
-
-  const args = msg.content.slice(PREFIX.length).trim().split(/ +/);
-  const commandName = args.shift().toLowerCase();
-
-  if (commandName === 'help') {
-    msg.channel.send(`Hello there ${msg.author.username}!\nThis bot is very bare bones at the moment. Currently it can only take messages you send it and stores them! Iris wanted this to be a suggestion box of sorts for the server but feel free to send it whatever you want! If you have suggestions for the bot as well, send them here too!\n(As of now any message starting with '!' is reserved for commands only but this may be subject to change)`);
-  }
-});
-
-// stores any dm to the bot that doesn't start with '!' as a message
-client.on("message", (msg) => {
-  if (
-    msg.author.bot ||
-    msg.content.startsWith(PREFIX) ||
-    msg.attachments.size > 0 || 
-    !(msg.channel instanceof Discord.DMChannel)
-  )
-    return;
-
-  console.log(`Collected ${msg.content}`);
-
-  // writes the message into a text file
-  fs.appendFileSync(
-    mailboxDir,
-    `${msg.author.username} : ${msg.content}\n`,
-    (err) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
+client.once('ready', () => {
+  console.log(`Logged in as ${client.user.tag}!`)
+  // for (const guild of client.guilds.cache) {
+  //   if (guild[1].name === 'Test') {
+  //     console.log(guild[1].id)
+  //   }
+  // }
+  const guild = client.guilds.cache.get('336192613721833474')
+  var channelID = ''
+  for (const ch of guild.channels.cache) {
+    if (
+      ch[1].type === 'GUILD_VOICE' &&
+      ch[1].name.startsWith('Days till Cabin Trip:')
+    ) {
+      channelID = ch[0]
     }
-  );
-
-  if (msg.content === "pee") {
-    msg.channel.send("bro wtf why?");
-  } else {
-    msg.channel.send("Thank you for your message!");
   }
-});
 
-client.login(process.env.CLIENT_ID);
+  var interval = 1
+  const channel = guild.channels.cache.get(channelID)
+
+  const update = () => {
+    const diff = eventDate.diff(moment(), 'days')
+    const days = parseInt(channel.name.split(': ')[1])
+    if (days - diff !== 0) {
+      guild.channels.edit(channelID, {
+        name: `Days till Cabin Trip: ${diff}`,
+      })
+      console.log('Countdown updated')
+    }
+    const nextDay = moment().add(1, 'days').startOf('day')
+    const nextUpdate = nextDay.diff(moment(), 'minutes') + 1
+    interval = nextUpdate
+
+    console.log(
+      `Next update at ${moment().add(interval, 'minutes').toString()}`
+    )
+
+    setTimeout(update, interval * 60 * 1000)
+  }
+  update()
+  // setTimeout(update, interval)
+})
+
+client.on('interactionCreate', async (interaction) => {
+  if (!interaction.isCommand()) return
+
+  const command = client.commands.get(interaction.commandName)
+
+  if (!command) return
+
+  try {
+    await command.execute(interaction)
+  } catch (err) {
+    console.error(err)
+    await interaction.reply({
+      content: 'There was an error while executing that command',
+      ephemeral: true,
+    })
+  }
+})
+
+const eventDate = new moment('8/8/2022', 'MM/DD/YYYY')
+const defaultInterval = 6
+var interval
+
+// const guild = client.guilds.cache
+// console.log(guild)
+
+// function update() {
+//   const diff = eventDate.diff(moment(), 'days')
+
+//   console.log(guild)
+// }
+
+// setInterval(() => {
+//   update()
+// }, 1000 * 5)
+
+client.login(process.env.TOKEN)

@@ -1,27 +1,31 @@
 {
-  "name": "persephone-bot",
+  "name": "discord-persephone",
   "version": "1.0.0",
-  "description": "A discord bot built on Node.js for receiving and viewing messages sent through dm's",
+  "description": "This bot is a virtual mailbox that collects messages through it's dm's that can be viewed by users.",
   "main": "index.js",
   "scripts": {
-    "start": "node ./src/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Jguo45/discord-persephone.git"
   },
-  "author": "Johnny Guo",
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Jguo45/discord-persephone/issues"
   },
   "homepage": "https://github.com/Jguo45/discord-persephone#readme",
   "dependencies": {
-    "better-sqlite3": "^7.4.3",
-    "discord.js": "^12.3.1",
-    "dotenv": "^8.2.0",
-    "heroku": "^7.56.1",
-    "nodemon": "^2.0.12",
-    "sqlite3": "^5.0.0"
+    "@discordjs/builders": "^0.15.0",
+    "@discordjs/rest": "^0.5.0",
+    "better-sqlite3": "^7.6.1",
+    "discord-api-types": "^0.36.2",
+    "discord.js": "^13.8.1",
+    "dotenv": "^16.0.1",
+    "moment": "^2.29.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
   }
 }
