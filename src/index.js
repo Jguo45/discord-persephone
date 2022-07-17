@@ -41,7 +41,7 @@ client.once('ready', () => {
   //     console.log(guild[1].id)
   //   }
   // }
-  const guild = client.guilds.cache.get('336192613721833474')
+  const guild = client.guilds.cache.get('937910529794654232')
   var channelID = ''
   for (const ch of guild.channels.cache) {
     if (
@@ -57,7 +57,7 @@ client.once('ready', () => {
   const eventDate = moment('8/8/2022', 'MM/DD/YYYY')
 
   const update = () => {
-    const diff = eventDate.diff(moment(), 'days')
+    const diff = eventDate.diff(moment(), 'days') + 1
     const days = parseInt(channel.name.split(': ')[1])
     if (days - diff !== 0) {
       guild.channels.edit(channelID, {
