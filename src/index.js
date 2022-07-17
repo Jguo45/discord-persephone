@@ -41,7 +41,7 @@ client.once('ready', () => {
   //     console.log(guild[1].id)
   //   }
   // }
-  const guild = client.guilds.cache.get('937910529794654232')
+  const guild = client.guilds.cache.get('336192613721833474')
   var channelID = ''
   for (const ch of guild.channels.cache) {
     if (
