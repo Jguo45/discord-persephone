@@ -41,7 +41,7 @@ client.once('ready', () => {
   //     console.log(guild[1].id)
   //   }
   // }
-  const guild = client.guilds.cache.get('336192613721833474')
+  const guild = client.guilds.cache.get('937910529794654232')
   var channelID = ''
   for (const ch of guild.channels.cache) {
     if (
@@ -98,7 +98,6 @@ client.on('interactionCreate', async (interaction) => {
 })
 
 client.on('guildCreate', (guild) => {
-  console.log(guild)
   deployCommands(guild.id)
 })
 
