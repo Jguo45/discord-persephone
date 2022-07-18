@@ -1,7 +1,8 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { Permissions } = require('discord.js')
 const moment = require('moment-timezone')
-moment().tz.setDefault('America/New_York')
+
+moment.tz.setDefault('America/New_York')
 
 module.exports = {
   data: new SlashCommandBuilder()
