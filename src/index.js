@@ -5,8 +5,8 @@ const { REST } = require('@discordjs/rest')
 const { Routes } = require('discord-api-types/v9')
 
 const { Client, Collection, Intents } = require('discord.js')
-const moment = require('moment')
-moment.tz.setDefault('America/New_York')
+const moment = require('moment-timezone')
+moment().tz.setDefault('America/New_York')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
 
 const commands = []
