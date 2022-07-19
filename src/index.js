@@ -65,7 +65,6 @@ client.once('ready', () => {
       guild.channels.edit(channelID, {
         name: `Days till Cabin Trip: ${diff}`,
       })
-      console.log(channel)
       console.log(`Countdown updated: ${days} -> ${diff}`)
     }
     const nextDay = moment().add(1, 'days').startOf('day')
