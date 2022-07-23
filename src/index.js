@@ -3,12 +3,24 @@ const fs = require('node:fs')
 const path = require('node:path')
 const { REST } = require('@discordjs/rest')
 const { Routes } = require('discord-api-types/v9')
+const moment = require('moment-timezone')
+const { Op } = require('sequelize')
+const { Users } = require('./db-objects.js')
 
 const { Client, Collection, Intents } = require('discord.js')
-const moment = require('moment-timezone')
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+const client = new Client({
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.DIRECT_MESSAGES,
+  ],
+  partials: ['CHANNEL'],
+})
 
+const mailboxDir = './data/mailbox.txt'
 moment.tz.setDefault('America/New_York')
+
+const currency = new Collection()
 
 const commands = []
 client.commands = new Collection()
@@ -25,24 +37,16 @@ for (const file of commandFiles) {
   client.commands.set(command.data.name, command)
 }
 
-const deployCommands = (guildID) => {
-  const rest = new REST({ version: '9' }).setToken(process.env.TOKEN)
-
-  rest
-    .put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guildID), {
-      body: commands,
-    })
-    .then(() => console.log('Successfully registered application commands.'))
-    .catch(console.error)
-}
-
-client.once('ready', () => {
+client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`)
-  // for (const guild of client.guilds.cache) {
-  //   if (guild[1].name === 'Test') {
-  //     console.log(guild[1].id)
-  //   }
+
+  // try {
+  //   await sequelize.authenticate()
+  //   console.log('Connection established successfully')
+  // } catch (err) {
+  //   console.error('Unable to connect to the database:', err)
   // }
+
   const guild = client.guilds.cache.get('937910529794654232')
   var channelID = ''
   for (const ch of guild.channels.cache) {
@@ -81,6 +85,14 @@ client.once('ready', () => {
   // setTimeout(update, interval)
 })
 
+client.once('reconnecting', () => {
+  console.log('Reconnecting!')
+})
+
+client.once('disconnect', () => {
+  console.log('Disconnected!')
+})
+
 client.on('interactionCreate', async (interaction) => {
   if (!interaction.isCommand()) return
 
@@ -99,8 +111,40 @@ client.on('interactionCreate', async (interaction) => {
   }
 })
 
+client.on('messageCreate', async (msg) => {
+  if (msg.author.bot || msg.guildId) return
+
+  console.log(msg)
+  console.log(msg.channel)
+
+  console.log(`Message collected: ${msg.content}`)
+
+  fs.appendFileSync(
+    mailboxDir,
+    `${msg.author.username}#${msg.author.discriminator} : ${msg.content}\n`,
+    (err) => {
+      if (err) {
+        console.error(err)
+        return
+      }
+    }
+  )
+  await msg.channel.send('Thanks for the message')
+})
+
 client.on('guildCreate', (guild) => {
   deployCommands(guild.id)
 })
 
 client.login(process.env.TOKEN)
+
+const deployCommands = (guildID) => {
+  const rest = new REST({ version: '9' }).setToken(process.env.TOKEN)
+
+  rest
+    .put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guildID), {
+      body: commands,
+    })
+    .then(() => console.log('Successfully registered application commands.'))
+    .catch(console.error)
+}
