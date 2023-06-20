@@ -6,12 +6,8 @@ module.exports = {
   async checkDatabase() {
     var users = new Array();
     for await (const [key, value] of keyv.iterator()) {
-      console.log(key, value);
-      const valueDate = moment(value, "M/DD/YYYY");
-      if (
-        valueDate.month === moment().month &&
-        valueDate.day === moment().day
-      ) {
+      const valueDate = moment(value, "M/D/YYYY");
+      if (valueDate.dayOfYear() == moment().dayOfYear()) {
         users.push(key);
       }
     }

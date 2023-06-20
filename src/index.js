@@ -43,7 +43,7 @@ client.once(Events.ClientReady, async (c) => {
   var channelExists = false;
 
   // TODO: change to actual server
-  const counterGuild = await client.guilds.fetch('937910529794654232')
+  const counterGuild = await client.guilds.fetch(process.env.TRIP_GUILD_ID)
   var channelID = ''
   for (const ch of counterGuild.channels.cache) {
     if (
@@ -68,16 +68,16 @@ client.once(Events.ClientReady, async (c) => {
     channelID = channel.id
   }
 
-  console.log(channelID)
   var interval = 1
   const channel = counterGuild.channels.cache.get(channelID)
-  const eventDate = moment('8/7/2023', 'mm/dd/yyyy')
+  const eventDate = moment('8/7/2023', 'M/D/YYYY')
 
   // TODO: change to actual server
-  const birthdayGuild = await client.guilds.fetch('336192613721833474')
+  const birthdayGuild = await client.guilds.fetch(process.env.MAIN_GUILD_ID)
   // TODO: update birthday role id
-  const roleID = '1118006784150487171'
-  const role = await birthdayGuild.roles.fetch(roleID)
+  const roleID = process.env.ROLE_ID
+  const birthdayRole = await birthdayGuild.roles.fetch(roleID)
+  await birthdayRole.setPosition(0)
 
   const updateEvent = async () => {
     console.log(`${moment().toString()}: Checking events...`)
@@ -94,17 +94,14 @@ client.once(Events.ClientReady, async (c) => {
     const nextUpdate = nextDay.diff(moment(), 'minutes') + 1
     interval = nextUpdate
 
-    
-
     // Birthday section
     console.log(`${moment().toString()}: Checking birthdays...`)
     const users = await checkDatabase()
-    console.log(users)
 
     // clears out birthday role
-    role.members.each(user => {
-      user.roles.remove(role)
-      console.log(`Removed ${role.name} role from ${user.user.username}`)
+    birthdayRole.members.each(user => {
+      user.roles.remove(birthdayRole)
+      console.log(`Removed ${birthdayRole.name} role from ${user.user.username}`)
     })
 
     if(users.length > 0) {
@@ -113,11 +110,11 @@ client.once(Events.ClientReady, async (c) => {
       for(const userID of users) {
         const user = await birthdayGuild.members.fetch(userID)
         // give users birthday role
-        user.roles.add(role)
+        user.roles.add(birthdayRole)
         msg += `${user}\n`
       }
       // TODO: change from test channel to actual channel
-      const msgChannel = await birthdayGuild.channels.fetch('336192613721833474')
+      const msgChannel = await birthdayGuild.channels.fetch(process.env.MAIN_GUILD_ID)
       msgChannel.send(msg)
     }
 

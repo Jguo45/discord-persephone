@@ -17,7 +17,8 @@ module.exports = {
     const user = interaction.options.getUser('user');
     const date = interaction.options.getString('date');
 
-    if(moment(date, "M/DD/YYYY", true).isValid()) {
+    if(moment(date, "M/D/YYYY", true).isValid()) {
+      console.log(`Birthday added: ${user.username}`)
       await keyv.set(user.id, date);
       await interaction.reply("Birthday added!")
     }

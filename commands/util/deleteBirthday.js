@@ -16,6 +16,7 @@ module.exports = {
     const user = interaction.options.getUser("user");
 
     if (await keyv.delete(user.id)) {
+      console.log(`${user.username}'s birthday deleted`);
       interaction.reply(`${user.username}'s birthday deleted`);
     } else {
       interaction.reply("User does not exist in database");
