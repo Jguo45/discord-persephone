@@ -60,7 +60,7 @@ client.once(Events.ClientReady, async (c) => {
       type: ChannelType.GuildVoice,
       permissionOverwrites: [
         {
-          id: guild.id,
+          id: counterGuild.id,
           deny: [PermissionsBitField.Flags.Connect]
         },
       ]
@@ -77,7 +77,6 @@ client.once(Events.ClientReady, async (c) => {
   // TODO: update birthday role id
   const roleID = process.env.ROLE_ID
   const birthdayRole = await birthdayGuild.roles.fetch(roleID)
-  await birthdayRole.setPosition(0)
 
   const updateEvent = async () => {
     console.log(`${moment().toString()}: Checking events...`)
@@ -105,16 +104,16 @@ client.once(Events.ClientReady, async (c) => {
     })
 
     if(users.length > 0) {
-      msg = `@everyone WISH A HAPPY <@&${roleID}> TO:\n`
+      var msg = `@everyone WISH A HAPPY <@&${roleID}> TO: `
 
       for(const userID of users) {
         const user = await birthdayGuild.members.fetch(userID)
         // give users birthday role
         user.roles.add(birthdayRole)
-        msg += `${user}\n`
+        msg += `${user} `
       }
       // TODO: change from test channel to actual channel
-      const msgChannel = await birthdayGuild.channels.fetch(process.env.MAIN_GUILD_ID)
+      const msgChannel = await birthdayGuild.channels.fetch(process.env.MAIN_CHANNEL_ID)
       msgChannel.send(msg)
     }
 
