@@ -18,6 +18,30 @@ moment.tz.setDefault("America/New_York");
 const keyv = new Keyv("sqlite://database//birthdays.sqlite");
 keyv.on("error", (err) => console.log("Connection Error", err));
 
+async function clearRole(role) {
+  role.members.each(async (user) => {
+    await user.roles.remove(role);
+    console.log(`Removed ${role.name} role from ${user.user.username}`);
+  });
+}
+
+async function createBirthdayMsg(guild, role, roleID) {
+  var msg = `@everyone WISH A HAPPY <@&${roleID}> TO: `;
+
+  for (const userID of users) {
+    const user = await guild.members.fetch(userID);
+    // give users birthday role
+    await user.roles.add(role);
+    msg += `${user} `;
+  }
+  // TODO: change from test channel to actual channel
+  const msgChannel = await guild.channels.fetch(process.env.MAIN_CHANNEL_ID);
+  if (sendMsgs) {
+    msgChannel.send(msg);
+  }
+  console.log(`Message sent: ${msg}`);
+}
+
 // Create a new client instance
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildPresences],
@@ -115,30 +139,10 @@ client.once(Events.ClientReady, async (c) => {
     const users = await checkDatabase(birthdayGuild);
 
     // clears out birthday role
-    birthdayRole.members.each(async (user) => {
-      await user.roles.remove(birthdayRole);
-      console.log(
-        `Removed ${birthdayRole.name} role from ${user.user.username}`
-      );
-    });
+    await clearRole(birthdayRole);
 
     if (users.length > 0) {
-      var msg = `@everyone WISH A HAPPY <@&${roleID}> TO: `;
-
-      for (const userID of users) {
-        const user = await birthdayGuild.members.fetch(userID);
-        // give users birthday role
-        await user.roles.add(birthdayRole);
-        msg += `${user} `;
-      }
-      // TODO: change from test channel to actual channel
-      const msgChannel = await birthdayGuild.channels.fetch(
-        process.env.MAIN_CHANNEL_ID
-      );
-      if (sendMsgs) {
-        msgChannel.send(msg);
-      }
-      console.log(`Message sent: ${msg}`);
+      createBirthdayMsg(birthdayGuild, birthdayRole, roleID);
     }
 
     console.log(
