@@ -1,7 +1,9 @@
 const { SlashCommandBuilder } = require("discord.js");
 const Keyv = require("keyv");
 const keyv = new Keyv("sqlite://database//birthdays.sqlite");
-const moment = require("moment");
+const moment = require("moment-timezone");
+
+moment.tz.setDefault("America/New_York");
 
 module.exports = {
   data: new SlashCommandBuilder()

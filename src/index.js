@@ -11,7 +11,9 @@ const {
 const Keyv = require("keyv");
 require("dotenv").config();
 const { checkDatabase } = require("../util/birthdayUtil");
-const moment = require("moment");
+const moment = require("moment-timezone");
+
+moment.tz.setDefault("America/New_York");
 
 const keyv = new Keyv("sqlite://database//birthdays.sqlite");
 keyv.on("error", (err) => console.log("Connection Error", err));
