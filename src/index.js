@@ -19,10 +19,11 @@ const keyv = new Keyv("sqlite://database//birthdays.sqlite");
 keyv.on("error", (err) => console.log("Connection Error", err));
 
 async function clearRole(role) {
-  role.members.each(async (user) => {
+  await role.members.each(async (user) => {
     await user.roles.remove(role);
     console.log(`Removed ${role.name} role from ${user.user.username}`);
   });
+  return true;
 }
 
 async function createBirthdayMsg(users, guild, role, roleID, sendMsgs) {
@@ -140,9 +141,13 @@ client.once(Events.ClientReady, async (c) => {
     const users = await checkDatabase(birthdayGuild);
 
     // clears out birthday role
-    await clearRole(birthdayRole);
+    var ready = false;
+    ready = await clearRole(birthdayRole);
 
     if (users.length > 0) {
+      // while (!ready) {
+      //   setTimeout(5);
+      // }
       createBirthdayMsg(users, birthdayGuild, birthdayRole, roleID, sendMsgs);
     }
 
