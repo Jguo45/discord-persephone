@@ -148,7 +148,13 @@ client.once(Events.ClientReady, async (c) => {
       // while (!ready) {
       //   setTimeout(5);
       // }
-      createBirthdayMsg(users, birthdayGuild, birthdayRole, roleID, sendMsgs);
+      await createBirthdayMsg(
+        users,
+        birthdayGuild,
+        birthdayRole,
+        roleID,
+        sendMsgs
+      );
     }
 
     console.log(
