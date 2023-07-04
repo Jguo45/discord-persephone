@@ -113,6 +113,7 @@ client.once(Events.ClientReady, async (c) => {
     // Birthday section
     console.log(`${moment().toString()}: Checking birthdays...`);
     const users = await checkDatabase();
+    console.log(`Birthdays today: ${users}`);
 
     // clears out birthday role
     birthdayRole.members.each((user) => {
