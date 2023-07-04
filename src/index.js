@@ -113,11 +113,11 @@ client.once(Events.ClientReady, async (c) => {
     // Birthday section
     console.log(`${moment().toString()}: Checking birthdays...`);
     const users = await checkDatabase();
-    // console.log(
-    //   `Birthdays today: ${users.map(
-    //     (user) => birthdayGuild.members.fetch(user).user.username
-    //   )}`
-    // );
+    console.log(
+      `Birthdays today: ${users.map(
+        (user) => birthdayGuild.members.fetch(user).user.username
+      )}`
+    );
 
     // clears out birthday role
     birthdayRole.members.each((user) => {
@@ -128,7 +128,7 @@ client.once(Events.ClientReady, async (c) => {
     });
 
     if (users.length > 0) {
-      var msg = `WISH A HAPPY <@&${roleID}> TO: `;
+      var msg = `@everyone WISH A HAPPY <@&${roleID}> TO: `;
 
       for (const userID of users) {
         const user = await birthdayGuild.members.fetch(userID);
@@ -153,6 +153,8 @@ client.once(Events.ClientReady, async (c) => {
     if (!sendMsgs) {
       sendMsgs = true;
     }
+
+    console.log(`sendMsgs: ${sendMsgs}`);
 
     setTimeout(updateEvent, interval * 60 * 1000);
   };
