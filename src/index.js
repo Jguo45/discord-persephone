@@ -25,7 +25,7 @@ async function clearRole(role) {
   });
 }
 
-async function createBirthdayMsg(users, guild, role, roleID) {
+async function createBirthdayMsg(users, guild, role, roleID, sendMsgs) {
   var msg = `@everyone WISH A HAPPY <@&${roleID}> TO: `;
 
   for (const userID of users) {
@@ -142,7 +142,7 @@ client.once(Events.ClientReady, async (c) => {
     await clearRole(birthdayRole);
 
     if (users.length > 0) {
-      createBirthdayMsg(users, birthdayGuild, birthdayRole, roleID);
+      createBirthdayMsg(users, birthdayGuild, birthdayRole, roleID, sendMsgs);
     }
 
     console.log(
