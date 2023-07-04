@@ -145,9 +145,9 @@ client.once(Events.ClientReady, async (c) => {
     ready = await clearRole(birthdayRole);
 
     if (users.length > 0) {
-      // while (!ready) {
-      //   setTimeout(5);
-      // }
+      while (!ready) {
+        setTimeout(5);
+      }
       await createBirthdayMsg(
         users,
         birthdayGuild,
