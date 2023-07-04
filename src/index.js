@@ -113,7 +113,11 @@ client.once(Events.ClientReady, async (c) => {
     // Birthday section
     console.log(`${moment().toString()}: Checking birthdays...`);
     const users = await checkDatabase();
-    console.log(`Birthdays today: ${users}`);
+    // console.log(
+    //   `Birthdays today: ${users.map(
+    //     (user) => birthdayGuild.members.fetch(user).user.username
+    //   )}`
+    // );
 
     // clears out birthday role
     birthdayRole.members.each((user) => {
@@ -129,7 +133,7 @@ client.once(Events.ClientReady, async (c) => {
       for (const userID of users) {
         const user = await birthdayGuild.members.fetch(userID);
         // give users birthday role
-        user.roles.add(birthdayRole);
+        await user.roles.add(birthdayRole);
         msg += `${user} `;
       }
       // TODO: change from test channel to actual channel
@@ -139,6 +143,7 @@ client.once(Events.ClientReady, async (c) => {
       if (sendMsgs) {
         msgChannel.send(msg);
       }
+      console.log(`Message sent: ${msg}`);
     }
 
     console.log(
