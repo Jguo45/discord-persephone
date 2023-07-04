@@ -141,21 +141,20 @@ client.once(Events.ClientReady, async (c) => {
     const users = await checkDatabase(birthdayGuild);
 
     // clears out birthday role
-    var ready = false;
-    ready = await clearRole(birthdayRole);
-
-    if (users.length > 0) {
-      while (!ready) {
-        setTimeout(5);
+    await clearRole(birthdayRole).then(async () => {
+      if (users.length > 0) {
+        while (!ready) {
+          setTimeout(5);
+        }
+        await createBirthdayMsg(
+          users,
+          birthdayGuild,
+          birthdayRole,
+          roleID,
+          sendMsgs
+        );
       }
-      await createBirthdayMsg(
-        users,
-        birthdayGuild,
-        birthdayRole,
-        roleID,
-        sendMsgs
-      );
-    }
+    });
 
     console.log(
       `Next update at ${moment().add(interval, "minutes").toString()}`
