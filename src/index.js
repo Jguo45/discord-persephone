@@ -113,15 +113,17 @@ client.once(Events.ClientReady, async (c) => {
     // Birthday section
     console.log(`${moment().toString()}: Checking birthdays...`);
     const users = await checkDatabase();
-    console.log(`Birthdays today:`);
+
+    var usersLog = "";
     users.map(async (user) => {
       const u = await birthdayGuild.members.fetch(user);
-      console.log(u.user.username);
+      usersLog += `${u.user.username}, `;
     });
+    console.log(`Birthdays today: ${usersLog}`);
 
     // clears out birthday role
-    birthdayRole.members.each((user) => {
-      user.roles.remove(birthdayRole);
+    birthdayRole.members.each(async (user) => {
+      await user.roles.remove(birthdayRole);
       console.log(
         `Removed ${birthdayRole.name} role from ${user.user.username}`
       );
@@ -153,8 +155,6 @@ client.once(Events.ClientReady, async (c) => {
     if (!sendMsgs) {
       sendMsgs = true;
     }
-
-    console.log(`sendMsgs: ${sendMsgs}`);
 
     setTimeout(updateEvent, interval * 60 * 1000);
   };
