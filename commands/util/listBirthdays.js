@@ -16,7 +16,7 @@ module.exports = {
       var msg = "Birthdays: \n";
       for (const [key, value] of birthdays) {
         const member = await members.fetch(key);
-        msg += `${member.user.username} : ${value}`;
+        msg += `${member.user.username} : ${value}\n`;
       }
       await interaction.reply(msg);
     }

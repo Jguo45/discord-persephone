@@ -51,6 +51,12 @@ for (const folder of commandFolders) {
 client.once(Events.ClientReady, async (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
 
+  var sendMsgs = true;
+  if (process.argv[2] && process.argv[2] === "-q") {
+    console.log("Starting bot in quiet mode...");
+    sendMsgs = false;
+  }
+
   var channelExists = false;
 
   // TODO: change to actual server
@@ -117,7 +123,7 @@ client.once(Events.ClientReady, async (c) => {
     });
 
     if (users.length > 0) {
-      var msg = `@everyone WISH A HAPPY <@&${roleID}> TO: `;
+      var msg = `WISH A HAPPY <@&${roleID}> TO: `;
 
       for (const userID of users) {
         const user = await birthdayGuild.members.fetch(userID);
@@ -129,12 +135,18 @@ client.once(Events.ClientReady, async (c) => {
       const msgChannel = await birthdayGuild.channels.fetch(
         process.env.MAIN_CHANNEL_ID
       );
-      msgChannel.send(msg);
+      if (sendMsgs) {
+        msgChannel.send(msg);
+      }
     }
 
     console.log(
       `Next update at ${moment().add(interval, "minutes").toString()}`
     );
+
+    if (!sendMsgs) {
+      sendMsgs = true;
+    }
 
     setTimeout(updateEvent, interval * 60 * 1000);
   };

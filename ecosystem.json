@@ -1,0 +1,8 @@
+{
+  "apps" : [{
+    "name"        : "persephone",
+    "script"      : "./src/index.js",
+    "watch"       : true,
+    "args"        : "-q"
+  }]
+}
