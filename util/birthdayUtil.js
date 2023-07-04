@@ -5,14 +5,19 @@ const moment = require("moment-timezone");
 moment.tz.setDefault("America/New_York");
 
 module.exports = {
-  async checkDatabase() {
+  async checkDatabase(guild) {
     var users = new Array();
+    var msg = "";
     for await (const [key, value] of keyv.iterator()) {
       const valueDate = moment(value, "M/D");
       if (valueDate.dayOfYear() == moment().dayOfYear()) {
         users.push(key);
+
+        const u = await guild.members.fetch(key);
+        msg += `${u.user.username}, `;
       }
     }
+    console.log(`Birthdays today: ${msg}`);
     return users;
   },
 

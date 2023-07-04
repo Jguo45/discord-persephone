@@ -114,13 +114,6 @@ client.once(Events.ClientReady, async (c) => {
     console.log(`${moment().toString()}: Checking birthdays...`);
     const users = await checkDatabase();
 
-    var usersLog = "";
-    users.map(async (user) => {
-      const u = await birthdayGuild.members.fetch(user);
-      usersLog += `${u.user.username}, `;
-    });
-    console.log(`Birthdays today: ${usersLog}`);
-
     // clears out birthday role
     birthdayRole.members.each(async (user) => {
       await user.roles.remove(birthdayRole);
