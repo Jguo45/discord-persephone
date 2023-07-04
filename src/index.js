@@ -32,6 +32,7 @@ async function createBirthdayMsg(users, guild, role, roleID, sendMsgs) {
     const user = await guild.members.fetch(userID);
     // give users birthday role
     await user.roles.add(role);
+    console.log(`${role.name} added to ${user.user.username}`);
     msg += `${user} `;
   }
   // TODO: change from test channel to actual channel
