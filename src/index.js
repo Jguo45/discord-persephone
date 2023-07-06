@@ -20,7 +20,7 @@ keyv.on("error", (err) => console.log("Connection Error", err));
 
 async function clearRole(role) {
   console.log(role.members);
-  if (role.members.length == 0) {
+  if (role.members.size == 0) {
     console.log("No users with birthday role...");
     return;
   }
