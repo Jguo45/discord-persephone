@@ -20,6 +20,7 @@ keyv.on("error", (err) => console.log("Connection Error", err));
 
 async function clearRole(role) {
   if (role.members.length == 0) {
+    console.log("No users with birthday role...");
     return;
   }
   await role.members.each(async (u) => {
